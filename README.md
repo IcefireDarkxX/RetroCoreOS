@@ -1,8 +1,8 @@
 # RetroCore Linux
 
-Distribuzione Linux per **PC vecchi (circa 2009)** basata su **CorePlus** (l'edizione completa di [Tiny Core Linux](http://tinycorelinux.net/)).
+Distribuzione Linux per **PC vecchi** basata su **CorePlus** (l'edizione completa di [Tiny Core Linux](http://tinycorelinux.net/)).
 
-## Perché Tiny Core
+## Perché RetroCoreOS
 
 Un PC del 2009 ha tipicamente 1–2 GB di RAM, GPU Intel/NVIDIA dell'epoca e poco spazio. CorePlus:
 
@@ -16,7 +16,7 @@ Un PC del 2009 ha tipicamente 1–2 GB di RAM, GPU Intel/NVIDIA dell'epoca e poc
 
 | Modifica | Dettaglio |
 |---|---|
-| Menu di avvio dedicato | default, modalità "**512 MB di RAM**" (senza copia in RAM), "**video sicuro**" (`nomodeset`, per schermate nere di GPU era), "solo console" |
+| Menu di avvio dedicato | default, modalità "**512 MB di RAM**", "**video sicuro**" (`nomodeset`, per schermate nere di GPU era), "solo console" |
 | Browser | firefox, netsurf (ultra-leggero), links (testuale/console) |
 | WiFi | firmware intel/realtek/atheros per laptop dell'epoca |
 | Dischi | ntfs-3g (leggere volumi Windows), dosfstools, gparted |
@@ -61,7 +61,7 @@ Il kit è pensato per Linux: su Windows basta **WSL2** (una Ubuntu integrata in 
 2. Nella barra di ricerca di Windows cerca "Ubuntu" e aprilo.
 3. Copia la cartella del progetto in un percorso accessibile da WSL (es. scaricando il progetto dentro Linux, oppure dal disco Windows):
    ```bash
-   cd /mnt/c/Users/<tuo-utente>/Downloads/TestLinuxVibeOS-main
+   cd /mnt/c/Users/<tuo-utente>/Downloads/RetroCoreOS-main
    ```
 4. Installa i prerequisiti (dentro Ubuntu):
    ```bash
@@ -71,7 +71,7 @@ Il kit è pensato per Linux: su Windows basta **WSL2** (una Ubuntu integrata in 
    ```bash
    chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh && ./build.sh
    ```
-6. La ISO compare in `dist/` ed è un file Windows normale: la trovi in `C:\Users\<tuo-utente>\Downloads\...\dist\retrocore-15-x-pc-vecchi.iso`.
+6. La ISO compare in `dist/` ed è un file Windows normale: la trovi in `C:\Users\<tuo-utente>\Downloads\...\dist\retrocore-x.iso`. In alternativa su Windows si crea una cartella nominata build all'interno del codice sorgente
 
    > ℹ️ Se la versione di Windows non supporta `wsl --install`, segui la guida [Attiva WSL](https://learn.microsoft.com/it-it/windows/wsl/install).
 
@@ -105,7 +105,7 @@ Nel progetto c'è già il workflow `.github/workflows/build.yml`:
 qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
 ```
 
-## Installare sul PC del 2009
+## Installare sul PC
 
 ### Da Windows: Rufus o balenaEtcher (consigliato)
 
@@ -154,9 +154,9 @@ Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **insta
 
 Dopo ogni modifica: `./build.sh` per rigenerare l'ISO.
 
-## Note per PC 2009
+## Note per PC
 
-- **RAM**: con 512 MB usa la voce "512 MB di RAM"; evita firefox → netsurf
+- **RAM**: con 512 MB usa la voce "512 MB di RAM";
 - **Schermo nero all'avvio**: usa la voce "video sicuro" (`nomodeset`)
 - **Persistenza**: le modifiche alla home si salvano con `filetool.sh -b`
 - **Credits**: progetto [Tiny Core Linux](http://tinycorelinux.net/) (licenza GPL/MIT per i componenti di base); questo kit licenza: MIT
