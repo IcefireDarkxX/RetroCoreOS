@@ -137,13 +137,19 @@ replace_boot_config() {
 # ----------------------------------------------------------------- creazione ISO finale
 pack_iso() {
   mkdir -p "$DIST"
-  local -a opts=(-J -R -V "$ISO_LABEL" -o "$OUT_ISO" -b boot/isolinux/isolinux.bin \
-                  -c boot/isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table)
-  if [[ -d "$EXTRACT/boot/syslinux" ]]; then
-    opts=(-J -R -V "$ISO_LABEL" -o "$OUT_ISO" -b boot/syslinux/isolinux.bin \
-          -c boot/syslinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table)
+  local bootbin bootcat
+  if [[ -f "$EXTRACT/boot/isolinux/isolinux.bin" ]]; then
+    bootbin=boot/isolinux/isolinux.bin; bootcat=boot/isolinux/boot.cat
+  elif [[ -f "$EXTRACT/boot/syslinux/isolinux.bin" ]]; then
+    bootbin=boot/syslinux/isolinux.bin; bootcat=boot/syslinux/boot.cat
+  else
+    die "isolinux.bin non trovato nell'ISO estratta"
   fi
-  (cd "$EXTRACT" && "$HOST_ISO" "${opts[@]}")
+  # xorriso emula genisoimage solo tramite '-as mkisofs', altrimenti rifiuta le opzioni
+  local -a pre=()
+  [[ "$HOST_ISO" == "xorriso" ]] && pre=(-as mkisofs)
+  (cd "$EXTRACT" && "$HOST_ISO" "${pre[@]}" -J -R -V "$ISO_LABEL" -o "$OUT_ISO" \
+    -b "$bootbin" -c "$bootcat" -no-emul-boot -boot-load-size 4 -boot-info-table .)
   log "suggerimento: la ISO e' avviabile anche da USB con 'dd' (vedi README)"
   (cd "$DIST" && md5sum "$(basename "$OUT_ISO")" > "$(basename "$OUT_ISO").md5.txt")
   log "ISO creata: $OUT_ISO ($(du -h "$OUT_ISO" | cut -f1))"
