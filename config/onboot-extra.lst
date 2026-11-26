@@ -2,6 +2,12 @@
 # Formato: un nome.tcz per riga. # = commento.
 # Ogni estensione viene verificata sul mirror al momento della build: se manca viene saltata.
 
+# --- Ambiente grafico: Xorg completo (risoluzione nativa, aggira i limiti VESA del BIOS) ---
+# Xvesa resta disponibile come riserva: rimuovi queste righe o imposta /etc/sysconfig/Xserver = Xvesa
+Xorg-7.7.tcz
+xf86-video-intel.tcz
+xf86-video-nouveau.tcz
+
 # --- Internet ---
 firefox.tcz
 netsurf.tcz
