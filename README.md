@@ -17,7 +17,7 @@ Un PC del 2009 ha tipicamente 1–2 GB di RAM, GPU Intel/NVIDIA dell'epoca e poc
 | Modifica | Dettaglio |
 |---|---|
 | Menu di avvio dedicato | default, modalità "**512 MB di RAM**" (senza copia in RAM), "**video sicuro**" (`nomodeset`, per schermate nere di GPU era), "solo console" |
-| **Xorg di serie** | Xorg-7.7 + driver Intel/nouveau preinstallati e impostati come X server di default: risoluzione nativa del pannello (Xvesa limitato dal BIOS VESA resta come riserva) |
+| **Xorg di serie** | Xorg-7.7 + driver Intel/nouveau/**ATI/AMD (radeon)** preinstallati e impostati come X server di default: risoluzione nativa del pannello (Xvesa limitato dal BIOS VESA resta come riserva); firmware AMD incluso. Le CPU AMD (Athlon/Phenom, K8/K10) sono supportate nativamente dal kernel |
 | Browser | firefox, netsurf (ultra-leggero), links (testuale/console) |
 | WiFi | firmware intel/realtek/atheros per laptop dell'epoca |
 | Dischi | ntfs-3g (leggere volumi Windows), dosfstools, gparted |
