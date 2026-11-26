@@ -1,0 +1,32 @@
+name: build-iso
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Installa strumenti di build
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wget squashfs-tools xorriso
+
+      - name: Costruisce RetroCore ISO
+        run: ./build.sh
+
+      - name: Calcola somma MD5
+        if: hashFiles('dist/*.iso') != ''
+        run: cat dist/*.md5.txt
+
+      - name: Carica ISO come artifact
+        if: hashFiles('dist/*.iso') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrocore-iso
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14

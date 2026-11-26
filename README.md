@@ -49,7 +49,57 @@ sudo pacman -S --needed wget squashfs-tools xorriso
 
 L'ISO è in `dist/retrocore-15-x-pc-vecchi.iso` con relativo MD5.
 
-### Provare senza toccare hardware
+### Costruire la ISO da Windows (WSL2)
+
+Il kit è pensato per Linux: su Windows basta **WSL2** (una Ubuntu integrata in Windows, gratuita e ufficiale Microsoft).
+
+1. Apri PowerShell come amministratore e installa Ubuntu:
+   ```powershell
+   wsl --install -d Ubuntu
+   ```
+   Riavvia il PC quando richiesto e imposta utente/password di Ubuntu.
+2. Nella barra di ricerca di Windows cerca "Ubuntu" e aprilo.
+3. Copia la cartella del progetto in un percorso accessibile da WSL (es. scaricando il progetto dentro Linux, oppure dal disco Windows):
+   ```bash
+   cd /mnt/c/Users/<tuo-utente>/Downloads/TestLinuxVibeOS-main
+   ```
+4. Installa i prerequisiti (dentro Ubuntu):
+   ```bash
+   sudo apt update && sudo apt install -y wget squashfs-tools xorriso
+   ```
+5. Costruisci la ISO:
+   ```bash
+   chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh && ./build.sh
+   ```
+6. La ISO compare in `dist/` ed è un file Windows normale: la trovi in `C:\Users\<tuo-utente>\Downloads\...\dist\retrocore-15-x-pc-vecchi.iso`.
+
+   > ℹ️ Se la versione di Windows non supporta `wsl --install`, segui la guida [Attiva WSL](https://learn.microsoft.com/it-it/windows/wsl/install).
+
+### Costruire la ISO da macOS (Homebrew)
+
+Prerequisito: [Homebrew](https://brew.sh/it/) (una riga di terminale, vedi il sito).
+
+```bash
+brew install wget xorriso squashfs e2fsprogs
+cd /percorso/di/TestLinuxVibeOS
+chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh
+./build.sh
+```
+
+La ISO è in `dist/retrocore-15-x-pc-vecchi.iso`.
+
+> ℹ️ Lo script richiede anche `md5sum`: se non è disponibile, prova `brew install md5sha1sum`.
+
+### Costruire senza installare nulla: build nel cloud (GitHub Actions)
+
+Nel progetto c'è già il workflow `.github/workflows/build.yml`:
+
+1. Su GitHub vai nella scheda **Actions** → seleziona **build-iso** sulla sinistra.
+2. Clicca **Run workflow** → conferma.
+3. Dopo ~3-4 minuti, apri il run completato e scarica l'artifact **retrocore-iso**: contiene `retrocore-15-x-pc-vecchi.iso` + file MD5.
+4. I prerequisiti (`xorriso`, `squashfs-tools`, ...) sono già installati dal workflow: non devi installare niente sul tuo PC.
+
+## Provare senza toccare hardware
 
 ```bash
 qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
@@ -57,13 +107,43 @@ qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
 
 ## Installare sul PC del 2009
 
-1. **Chiavetta USB** (consigliata): `sudo dd if=dist/retrocore-*.iso of=/dev/sdX bs=4M oflag=sync status=progress`
+### Da Windows: Rufus o balenaEtcher (consigliato)
 
-   > ⚠️ `/dev/sdX` è il PENNINO, controllalo con `lsblk`. Alcuni PC 2009 non avviano da USB: usa il BIOS con "USB-HDD" o la modalità CD.
+1. Scarica e installa [Rufus](https://rufus.ie/it/) o [balenaEtcher](https://etcher.balena.io/).
+2. Inserisci il disc USB (**verrà cancellato tutto** — non serve formattare prima).
+3. **Rufus**: scegli il dispositivo e la ISO, tipo di partizione MBR, e quando lo chiede seleziona **DD mode** (modalità immagine). **balenaEtcher**: *Flash from file* → scegli la ISO → *Select target* → *Flash!*.
+4. Al termine, espelli la chiavetta e avviala nel PC del 2009.
 
-2. **CD-R/RW**: brucia l'ISO con `wodim`/Brasero (`burn` — non "image to disc").
+### Da macOS: balenaEtcher o dd
 
-3. Dal menu di Tiny Core, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD).
+1. Installa [balenaEtcher](https://etcher.balena.io/) e flasha la immagine come sopra; oppure da terminale:
+   ```bash
+   diskutil list                          # individua il disco della chiavetta, es. disk4
+   diskutil unmountDisk /dev/disk4
+   sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/rdisk4 bs=4m oflag=sync
+   diskutil eject /dev/disk4
+   ```
+   > ⚠️ su macOS il device è `/dev/rdiskN` (con "r"): è più veloce. Controlla bene il numero del disco con `diskutil list`, sbagliare cancella il disco indicato.
+
+### Da Linux: dd
+
+```bash
+lsblk                                  # individua la chiavetta, es. sdb
+sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/sdX bs=4M oflag=sync status=progress
+sync
+```
+
+> ⚠️ `/dev/sdX` è il PENNINO, controllalo con `lsblk`. Alcuni PC 2009 non avviano da USB: usa il BIOS con "USB-HDD" o la modalità CD.
+
+### Tramite CD
+
+- Windows: [ImgBurn](https://www.imgburn.com/) o CDBurnerXP, opzione **Write image file to disc** (non "data disc")
+- macOS: Utility Disco → menu **Immagini** → **Masterizza...**
+- Linux: `wodim -v dev=/dev/cdrom dist/retrocore-*.iso` o Brasero/K3b "masterizza immagine"
+
+### Installazione su disco fisso
+
+Dal menu di Tiny Core, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD/USB).
 
 ## Personalizzare
 
