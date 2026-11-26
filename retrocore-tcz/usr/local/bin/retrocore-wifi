@@ -1,0 +1,8 @@
+#!/bin/sh
+# retrocore-wifi - collega il WiFi in modo semplice (supporta WEP/WPA tramite wifi.tcz di Tiny Core)
+if ! command -v wifi >/dev/null 2>&1; then
+  echo "Serve 'wifi.tcz': installa con:  tce-load -wi wifi"
+  exit 1
+fi
+echo "Scansione e connessione wifi (utility 'wifi' di Tiny Core, segue le istruzioni)..."
+exec wifi
