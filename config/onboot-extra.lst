@@ -1,0 +1,30 @@
+# RetroCore Linux - estensioni aggiuntive caricate all'avvio (oltre a quelle gia' incluse in CorePlus)
+# Formato: un nome.tcz per riga. # = commento.
+# Ogni estensione viene verificata sul mirror al momento della build: se manca viene saltata.
+
+# --- Internet ---
+firefox.tcz
+netsurf.tcz
+links.tcz
+
+# --- Firmware WiFi/reti per laptop del periodo ---
+firmware-iwlwifi.tcz
+firmware-rtlwifi.tcz
+firmware-ath9k-htc.tcz
+
+# --- Filesystem di dischi provenienti da Windows ---
+ntfs-3g.tcz
+dosfstools.tcz
+
+# --- Partizionamento e manutenzione dischi ---
+gparted.tcz
+
+# --- Grafica leggera ---
+mtpaint.tcz
+
+# --- Audio (alsamixer/alsactl da terminale) ---
+alsa-utils.tcz
+
+# --- Opzionale: suite completa (rallenta il boot su 512 MB di RAM) ---
+# Decommentare la riga se il PC ha almeno 1 GB di RAM:
+# libreoffice.tcz

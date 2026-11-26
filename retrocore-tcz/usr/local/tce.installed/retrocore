@@ -1,0 +1,7 @@
+#!/bin/sh
+# Nota: tce.installed viene eseguauta dalla base all'installazione dell'estensione
+h="/home/tc"
+[ -d "$h" ] || exit 0
+mkdir -p "$h/.X.d"
+cp /etc/skel/.X.d/retrocore.sh "$h/.X.d/" 2>/dev/null || true
+chown tc:staff "$h/.X.d/retrocore.sh" 2>/dev/null || true
