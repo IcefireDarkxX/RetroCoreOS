@@ -5,25 +5,28 @@ B="\033[1;36m"; N="\033[0m"
 banner() {
   printf "$B"
   cat <<'BANNER'
-  _                 _                            _
- | |_ ___  ___  ___| |_   ___ ___  _ _ ___ ___ _| |___ _ _
- |  _/ _ \/ _ \/ _ \ ' \ (_-</ _ \| '_/ -_) -_) ) / -_) '_|
-  \__\___/\___/\___/_||_/__/ \___/|_| \___\___|__/\___|_|
+###### ###### ###### ###### ######  ##### ###### ###### ######
+#    # #        ##   #    # #    # #      #    # #    # #
+###### #####    ##   ###### #    # #      #    # ###### #####
+#   #  #        ##   #   #  #    # #      #    # #   #  #
+#   #  ######   ##   #   #  ######  ##### ###### #   #  ######
 
   RetroCore - distribuzione per PC vecchi, base Tiny Core
 BANNER
   printf "$N"
 }
 
-cpu=$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | sed 's/^ *//')
-kernel=$(uname -r)
-ram=$(free -m 2>/dev/null | awk '/^Mem:/{print $2}')
+summary() {
+  cpu=$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | sed 's/^ *//')
+  kernel=$(uname -r)
+  ram=$(free -m 2>/dev/null | awk '/^Mem:/{print $2}')
 
-echo ""
-echo "  Kernel : $kernel"
-[ -n "$cpu" ] && echo "  CPU    : $cpu"
-[ -n "$ram" ] && echo "  RAM    : ${ram} MB"
-echo ""
+  echo ""
+  echo "  Kernel : $kernel"
+  [ -n "$cpu" ] && echo "  CPU    : $cpu"
+  [ -n "$ram" ] && echo "  RAM    : ${ram} MB"
+  echo ""
+}
 
 if [ "$1" = "--help" ]; then
   echo "Comandi utili di RetroCore:"
@@ -31,4 +34,8 @@ if [ "$1" = "--help" ]; then
   echo "  retrocore-wifi     collegarsi al WiFi"
   echo "  tce-load -wi X     installa un'estensione (es: tce-load -wi firefox)"
   echo "  filetool.sh -b     salva le impostazioni per il prossimo avvio"
+  exit 0
 fi
+
+banner
+summary
