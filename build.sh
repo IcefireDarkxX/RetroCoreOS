@@ -87,6 +87,10 @@ extract_iso() {
     isoinfo) ( cd "$EXTRACT" && isoinfo -R -i "$SRC_ISO" -x / | true ); die "estrazione con isoinfo non supportata, installa xorriso o 7z" ;;
   esac
   [[ -f "$EXTRACT"/boot/core.gz ]] || die "estrazione ISO incompleta: boot/core.gz non trovato"
+  # l'ISO estrae i file in sola lettura; su WSL (/mnt/c) i permessi non sono correggibili dopo, quindi li rendiamo scrivibili subito
+  chmod -R u+w "$EXTRACT" 2>/dev/null || true
+  [[ -w "$EXTRACT/cde/onboot.lst" ]] || chmod u+w "$EXTRACT/cde/onboot.lst" 2>/dev/null || \
+    die "$EXTRACT/cde/onboot.lst non scrivibile: sposta il progetto dentro il filesystem Linux di WSL (es. ~/RetroCoreOS) e riprova da li"
 }
 
 # ----------------------------------------------------------------- estensioni extra da cde/optional
