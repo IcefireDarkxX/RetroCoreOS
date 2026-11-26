@@ -143,7 +143,7 @@ sync
 
 ### Installazione su disco fisso
 
-Dal menu di Tiny Core, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD/USB).
+Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD/USB).
 
 ## Personalizzare
 
