@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TC_VERSION="${1:-${TC_VERSION:-15.x}}"
 ARCH="x86"
 DIST_NAME="RetroCore"
-ISO_LABEL="RETROCORE"
+ISO_LABEL="RETROCOREOS"
 WORK="$SCRIPT_DIR/build"
 DIST="$SCRIPT_DIR/dist"
 MIRRORS=(
@@ -22,9 +22,9 @@ MIRRORS=(
 )
 
 SRC_ISO_SRC_NAME="CorePlus-current.iso"
-SRC_ISO="$WORK/CorePlus-${TC_VERSION}.iso"
+SRC_ISO="$WORK/src/CorePlus-${TC_VERSION}.iso"
 EXTRACT="$WORK/iso"
-OUT_ISO="$DIST/${DIST_NAME,,}-$(echo "$TC_VERSION" | tr . -)-pc-vecchi.iso"
+OUT_ISO="$DIST/${DIST_NAME}-$(echo "$TC_VERSION" | tr . -)-x86.iso"
 
 log()  { printf '\033[1;36m[retrocore]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[retrocore]\033[0m %s\n' "$*"; }
@@ -68,10 +68,11 @@ fetch() { # fetch <percorso-sul-mirror> <destinazione>
 }
 
 download_iso() {
+  mkdir -p "$WORK/src"
   if [[ -s "$SRC_ISO" ]]; then
     log "uso ISO sorgente esistente: $SRC_ISO"
   else
-    log "scarico CorePlus ${TC_VERSION} (${ARCH}, ~250 MB) ..."
+    log "scarico la ISO SORGENTE CorePlus ${TC_VERSION} (${ARCH}, ~250 MB): resta in build/src/, NON e' quella da flashare"
     fetch "release/${SRC_ISO_SRC_NAME}" "$SRC_ISO" || die "download ISO fallito (controlla la versione ${TC_VERSION})"
   fi
   [[ $(stat -c%s "$SRC_ISO") -gt 10000000 ]] || die "ISO sorgente troppo piccola, file corrotto"
@@ -132,18 +133,25 @@ replace_boot_config() {
     "$SCRIPT_DIR/config/isolinux.cfg"
   cp "$SCRIPT_DIR/config/isolinux.cfg" "$cfg_dir/isolinux.cfg"
   cp "$SCRIPT_DIR/config/isolinux.cfg" "$WORK/isolinux.cfg.retrocore"
+  sed "s|@TC_VERSION@|${TC_VERSION}|g" "$SCRIPT_DIR/config/boot.msg" > "$cfg_dir/boot.msg"
 }
 
 # ----------------------------------------------------------------- creazione ISO finale
 pack_iso() {
   mkdir -p "$DIST"
-  local -a opts=(-J -R -V "$ISO_LABEL" -o "$OUT_ISO" -b boot/isolinux/isolinux.bin \
-                  -c boot/isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table)
-  if [[ -d "$EXTRACT/boot/syslinux" ]]; then
-    opts=(-J -R -V "$ISO_LABEL" -o "$OUT_ISO" -b boot/syslinux/isolinux.bin \
-          -c boot/syslinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table)
+  local bootbin bootcat
+  if [[ -f "$EXTRACT/boot/isolinux/isolinux.bin" ]]; then
+    bootbin=boot/isolinux/isolinux.bin; bootcat=boot/isolinux/boot.cat
+  elif [[ -f "$EXTRACT/boot/syslinux/isolinux.bin" ]]; then
+    bootbin=boot/syslinux/isolinux.bin; bootcat=boot/syslinux/boot.cat
+  else
+    die "isolinux.bin non trovato nell'ISO estratta"
   fi
-  (cd "$EXTRACT" && "$HOST_ISO" "${opts[@]}")
+  # xorriso emula genisoimage solo tramite '-as mkisofs', altrimenti rifiuta le opzioni
+  local -a pre=()
+  [[ "$HOST_ISO" == "xorriso" ]] && pre=(-as mkisofs)
+  (cd "$EXTRACT" && "$HOST_ISO" "${pre[@]}" -J -R -V "$ISO_LABEL" -o "$OUT_ISO" \
+    -b "$bootbin" -c "$bootcat" -no-emul-boot -boot-load-size 4 -boot-info-table .)
   log "suggerimento: la ISO e' avviabile anche da USB con 'dd' (vedi README)"
   (cd "$DIST" && md5sum "$(basename "$OUT_ISO")" > "$(basename "$OUT_ISO").md5.txt")
   log "ISO creata: $OUT_ISO ($(du -h "$OUT_ISO" | cut -f1))"
@@ -167,6 +175,7 @@ USB:          sudo dd if=$(basename "$OUT_ISO") of=/dev/sdX bs=4M oflag=sync sta
 MD5:          $(basename "$OUT_ISO").md5.txt
 EOF
   log "fatto. dist/: $(ls "$DIST")"
+  log "RICORDA: flasha SOLO il file in dist/ ($OUT_ISO); l'ISO in build/src/ e' solo il materiale di partenza e si chiama CorePlus."
   if [[ -s "$WORK/missing-ext.txt" ]]; then
     warn "estensioni non trovate sul mirror (escluse, la ISO funziona lo stesso):"
     warn "$(tr '\n' ' ' < "$WORK/missing-ext.txt")"

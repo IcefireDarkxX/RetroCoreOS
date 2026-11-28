@@ -1,8 +1,8 @@
 # RetroCore Linux
 
-Distribuzione Linux per **PC vecchi (circa 2009)** basata su **CorePlus** (l'edizione completa di [Tiny Core Linux](http://tinycorelinux.net/)).
+Distribuzione Linux per **PC vecchi** basata su **CorePlus** (l'edizione completa di [Tiny Core Linux](http://tinycorelinux.net/)).
 
-## Perché Tiny Core
+## Perché RetroCoreOS
 
 Un PC del 2009 ha tipicamente 1–2 GB di RAM, GPU Intel/NVIDIA dell'epoca e poco spazio. CorePlus:
 
@@ -17,6 +17,8 @@ Un PC del 2009 ha tipicamente 1–2 GB di RAM, GPU Intel/NVIDIA dell'epoca e poc
 | Modifica | Dettaglio |
 |---|---|
 | Menu di avvio dedicato | default, modalità "**512 MB di RAM**" (senza copia in RAM), "**video sicuro**" (`nomodeset`, per schermate nere di GPU era), "solo console" |
+| **Xorg di serie** | Xorg-7.7 + driver Intel/nouveau/**ATI/AMD (radeon)** preinstallati e impostati come X server di default: risoluzione nativa del pannello (Xvesa limitato dal BIOS VESA resta come riserva); firmware AMD incluso. Le CPU AMD (Athlon/Phenom, K8/K10) sono supportate nativamente dal kernel |
+| Menu di avvio dedicato | default, modalità "**512 MB di RAM**", "**video sicuro**" (`nomodeset`, per schermate nere di GPU era), "solo console" |
 | Browser | firefox, netsurf (ultra-leggero), links (testuale/console) |
 | WiFi | firmware intel/realtek/atheros per laptop dell'epoca |
 | Dischi | ntfs-3g (leggere volumi Windows), dosfstools, gparted |
@@ -47,7 +49,7 @@ sudo pacman -S --needed wget squashfs-tools xorriso
 ./build.sh 14.x       # nuova release, se indicato
 ```
 
-L'ISO è in `dist/retrocore-15-x-pc-vecchi.iso` con relativo MD5.
+L'ISO è in `dist/RetroCoreOS-15.x-x86.iso` con relativo MD5.
 
 ### Costruire la ISO da Windows (WSL2)
 
@@ -61,7 +63,7 @@ Il kit è pensato per Linux: su Windows basta **WSL2** (una Ubuntu integrata in 
 2. Nella barra di ricerca di Windows cerca "Ubuntu" e aprilo.
 3. Copia la cartella del progetto in un percorso accessibile da WSL (es. scaricando il progetto dentro Linux, oppure dal disco Windows):
    ```bash
-   cd /mnt/c/Users/<tuo-utente>/Downloads/TestLinuxVibeOS-main
+   cd /mnt/c/Users/<tuo-utente>/Downloads/RetroCoreOS-main
    ```
 4. Installa i prerequisiti (dentro Ubuntu):
    ```bash
@@ -71,7 +73,7 @@ Il kit è pensato per Linux: su Windows basta **WSL2** (una Ubuntu integrata in 
    ```bash
    chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh && ./build.sh
    ```
-6. La ISO compare in `dist/` ed è un file Windows normale: la trovi in `C:\Users\<tuo-utente>\Downloads\...\dist\retrocore-15-x-pc-vecchi.iso`.
+6. La ISO compare in `dist/` ed è un file Windows normale: la trovi in `C:\Users\<tuo-utente>\Downloads\...\dist\retrocore-x.iso`. In alternativa su Windows si crea una cartella nominata build all'interno del codice sorgente
 
    > ℹ️ Se la versione di Windows non supporta `wsl --install`, segui la guida [Attiva WSL](https://learn.microsoft.com/it-it/windows/wsl/install).
 
@@ -86,7 +88,7 @@ chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh
 ./build.sh
 ```
 
-La ISO è in `dist/retrocore-15-x-pc-vecchi.iso`.
+La ISO è in `dist/RetroCoreOS-15.x-x86.iso`.
 
 > ℹ️ Lo script richiede anche `md5sum`: se non è disponibile, prova `brew install md5sha1sum`.
 
@@ -96,16 +98,16 @@ Nel progetto c'è già il workflow `.github/workflows/build.yml`:
 
 1. Su GitHub vai nella scheda **Actions** → seleziona **build-iso** sulla sinistra.
 2. Clicca **Run workflow** → conferma.
-3. Dopo ~3-4 minuti, apri il run completato e scarica l'artifact **retrocore-iso**: contiene `retrocore-15-x-pc-vecchi.iso` + file MD5.
+3. Dopo ~3-4 minuti, apri il run completato e scarica l'artifact **retrocore-iso**: contiene `RetroCoreOS-15.x-x86.iso` + file MD5.
 4. I prerequisiti (`xorriso`, `squashfs-tools`, ...) sono già installati dal workflow: non devi installare niente sul tuo PC.
 
 ## Provare senza toccare hardware
 
 ```bash
-qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
+qemu-system-i386 -m 1024 -cdrom dist/RetroCoreOS-15.x-x86.iso
 ```
 
-## Installare sul PC del 2009
+## Installare sul PC
 
 ### Da Windows: Rufus o balenaEtcher (consigliato)
 
@@ -120,7 +122,7 @@ qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
    ```bash
    diskutil list                          # individua il disco della chiavetta, es. disk4
    diskutil unmountDisk /dev/disk4
-   sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/rdisk4 bs=4m oflag=sync
+   sudo dd if=dist/RetroCoreOS-15.x-x86.iso of=/dev/rdisk4 bs=4m oflag=sync
    diskutil eject /dev/disk4
    ```
    > ⚠️ su macOS il device è `/dev/rdiskN` (con "r"): è più veloce. Controlla bene il numero del disco con `diskutil list`, sbagliare cancella il disco indicato.
@@ -129,7 +131,7 @@ qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
 
 ```bash
 lsblk                                  # individua la chiavetta, es. sdb
-sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/sdX bs=4M oflag=sync status=progress
+sudo dd if=dist/RetroCoreOS-15.x-x86.iso of=/dev/sdX bs=4M oflag=sync status=progress
 sync
 ```
 
@@ -145,6 +147,12 @@ sync
 
 Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD/USB).
 
+## Installare programmi
+
+- **Repository .tcz** (modo principale): `tce-load -wi <nome>.tcz` o l'app **Apps** grafica — migliaia di pacchetti dai mirror ufficiali di Tiny Core
+- **AppImage**: file singolo, nessuna infrastruttura — scaricalo in `~/Applications` ed eseguilo con `retrocore-appimage file.AppImage` (funziona anche senza FUSE, estrae in /tmp); si conserva con `filetool.sh -b`
+- **Flatpak/Flathub e Snap: non disponibili (per scelta tecnica)** — richiedono systemd, OSTree/bubblewrap e runtime da 1–2 GB incompatibili con l'architettura di Tiny Core e con 512 MB–2 GB di RAM; le AppImage coprono lo stesso scopo con peso minimo
+
 ## Personalizzare
 
 - `config/onboot-extra.lst` — elenco delle estensioni incluse nella ISO (decommenta `libreoffice` se il PC ha ≥ 1 GB di RAM)
@@ -154,15 +162,9 @@ Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **insta
 
 Dopo ogni modifica: `./build.sh` per rigenerare l'ISO.
 
-## Ottimizzazioni incluse
+## Note per PC
 
-- **zram**: swap compresso in RAM attivato automaticamente (25% della RAM, max 512 MB, solo con ≤ 4 GB e se non c'è già swap) — evita il swap su disco meccanico, il colpevole principale dei "freezamenti" sui PC con poca RAM
-- **Backup rapidi**: `filetool.sh -b` esclude cache browser, Flash e cestino (`/opt/.xfiletool.lst` aggiornato in modo idempotente all'avvio)
-- **Boot più rapido**: timeout del menu di avvio ridotto a 5 secondi
-
-## Note per PC 2009
-
-- **RAM**: con 512 MB usa la voce "512 MB di RAM"; evita firefox → netsurf
+- **RAM**: con 512 MB usa la voce "512 MB di RAM";
 - **Schermo nero all'avvio**: usa la voce "video sicuro" (`nomodeset`)
 - **Persistenza**: le modifiche alla home si salvano con `filetool.sh -b`
 - **Credits**: progetto [Tiny Core Linux](http://tinycorelinux.net/) (licenza GPL/MIT per i componenti di base); questo kit licenza: MIT
