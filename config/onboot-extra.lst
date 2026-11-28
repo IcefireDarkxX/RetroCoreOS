@@ -2,6 +2,18 @@
 # Formato: un nome.tcz per riga. # = commento.
 # Ogni estensione viene verificata sul mirror al momento della build: se manca viene saltata.
 
+# --- Ambiente grafico: Xorg completo (risoluzione nativa, aggira i limiti VESA del BIOS) ---
+# Xvesa resta disponibile come riserva: rimuovi queste righe o imposta /etc/sysconfig/Xserver = Xvesa
+Xorg-7.7.tcz
+xf86-video-intel.tcz
+xf86-video-nouveau.tcz
+
+# --- GPU AMD/ATI (serie HD 2000-4000, molto comuni nel 2009; il driver radeon copre anche le più vecchie) ---
+xf86-video-ati.tcz
+xf86-video-amdgpu.tcz
+firmware-radeon.tcz
+firmware-amdgpu.tcz
+
 # --- Internet ---
 firefox.tcz
 netsurf.tcz

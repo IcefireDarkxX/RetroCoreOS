@@ -1,5 +1,11 @@
 #!/bin/sh
-# Nota: tce.installed viene eseguauta dalla base all'installazione dell'estensione
+# Nota: tce.installed viene eseguita dalla base all'installazione dell'estensione
+
+# Usa Xorg come X server di default se l'estensione e' stata caricata
+if [ -x /usr/local/bin/Xorg ]; then
+  echo "Xorg" > /etc/sysconfig/Xserver
+fi
+
 h="/home/tc"
 [ -d "$h" ] || exit 0
 mkdir -p "$h/.X.d"
