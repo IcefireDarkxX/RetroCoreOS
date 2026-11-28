@@ -49,7 +49,7 @@ sudo pacman -S --needed wget squashfs-tools xorriso
 ./build.sh 14.x       # nuova release, se indicato
 ```
 
-L'ISO è in `dist/retrocore-15-x-pc-vecchi.iso` con relativo MD5.
+L'ISO è in `dist/RetroCoreOS-15.x-x86.iso` con relativo MD5.
 
 ### Costruire la ISO da Windows (WSL2)
 
@@ -88,7 +88,7 @@ chmod +x build.sh tools/fetch-ext.sh build-retrocore-tcz.sh
 ./build.sh
 ```
 
-La ISO è in `dist/retrocore-15-x-pc-vecchi.iso`.
+La ISO è in `dist/RetroCoreOS-15.x-x86.iso`.
 
 > ℹ️ Lo script richiede anche `md5sum`: se non è disponibile, prova `brew install md5sha1sum`.
 
@@ -98,13 +98,13 @@ Nel progetto c'è già il workflow `.github/workflows/build.yml`:
 
 1. Su GitHub vai nella scheda **Actions** → seleziona **build-iso** sulla sinistra.
 2. Clicca **Run workflow** → conferma.
-3. Dopo ~3-4 minuti, apri il run completato e scarica l'artifact **retrocore-iso**: contiene `retrocore-15-x-pc-vecchi.iso` + file MD5.
+3. Dopo ~3-4 minuti, apri il run completato e scarica l'artifact **retrocore-iso**: contiene `RetroCoreOS-15.x-x86.iso` + file MD5.
 4. I prerequisiti (`xorriso`, `squashfs-tools`, ...) sono già installati dal workflow: non devi installare niente sul tuo PC.
 
 ## Provare senza toccare hardware
 
 ```bash
-qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
+qemu-system-i386 -m 1024 -cdrom dist/RetroCoreOS-15.x-x86.iso
 ```
 
 ## Installare sul PC
@@ -122,7 +122,7 @@ qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
    ```bash
    diskutil list                          # individua il disco della chiavetta, es. disk4
    diskutil unmountDisk /dev/disk4
-   sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/rdisk4 bs=4m oflag=sync
+   sudo dd if=dist/RetroCoreOS-15.x-x86.iso of=/dev/rdisk4 bs=4m oflag=sync
    diskutil eject /dev/disk4
    ```
    > ⚠️ su macOS il device è `/dev/rdiskN` (con "r"): è più veloce. Controlla bene il numero del disco con `diskutil list`, sbagliare cancella il disco indicato.
@@ -131,7 +131,7 @@ qemu-system-i386 -m 1024 -cdrom dist/retrocore-15-x-pc-vecchi.iso
 
 ```bash
 lsblk                                  # individua la chiavetta, es. sdb
-sudo dd if=dist/retrocore-15-x-pc-vecchi.iso of=/dev/sdX bs=4M oflag=sync status=progress
+sudo dd if=dist/RetroCoreOS-15.x-x86.iso of=/dev/sdX bs=4M oflag=sync status=progress
 sync
 ```
 
