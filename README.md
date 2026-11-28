@@ -154,6 +154,12 @@ Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **insta
 
 Dopo ogni modifica: `./build.sh` per rigenerare l'ISO.
 
+## Ottimizzazioni incluse
+
+- **zram**: swap compresso in RAM attivato automaticamente (25% della RAM, max 512 MB, solo con ≤ 4 GB e se non c'è già swap) — evita il swap su disco meccanico, il colpevole principale dei "freezamenti" sui PC con poca RAM
+- **Backup rapidi**: `filetool.sh -b` esclude cache browser, Flash e cestino (`/opt/.xfiletool.lst` aggiornato in modo idempotente all'avvio)
+- **Boot più rapido**: timeout del menu di avvio ridotto a 5 secondi
+
 ## Note per PC 2009
 
 - **RAM**: con 512 MB usa la voce "512 MB di RAM"; evita firefox → netsurf
