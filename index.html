@@ -63,6 +63,7 @@
   <tr><td>WiFi</td><td>Firmware Intel, Realtek, Atheros (per i laptop dell'epoca)</td></tr>
   <tr><td>Disco e partizioni</td><td>NTFS-3G · DOSFStools · GParted</td></tr>
   <tr><td>Extra</td><td>mtPaint · alsa-utils</td></tr>
+  <tr><td>App aggiuntive</td><td>Repository .tcz di Tiny Core (migliaia di pacchetti) + supporto <strong>AppImage</strong> integrato (<code>retrocore-appimage</code>, funziona senza FUSE)</td></tr>
   <tr><td>Personalizzazione</td><td><code>retrocore-info</code> · <code>retrocore-wifi</code> · banner di benvenuto · sfondo scuro</td></tr>
 </table>
 
@@ -99,6 +100,10 @@
 ./build.sh</code></pre>
 <p class="out">→ <code>dist/RetroCoreOS-15.x-x86.iso</code> + MD5, pronta per la scrittura su USB.</p>
 <p>Oppure <strong>senza installare nulla</strong>: build automatica nel cloud con GitHub Actions (scheda <em>Actions</em> → <em>build-iso</em> → <em>Run workflow</em>) e scarichi l'artifact che contiene la ISO.</p>
+
+<h2>Installare programmi</h2>
+<p>Dal repository <strong>.tcz</strong> di Tiny Core (<code>tce-load -wi nome.tcz</code> o app <em>Apps</em>) oppure con file singoli <strong>AppImage</strong>: scarichi, <code>retrocore-appimage file.AppImage</code>, funziona — senza daemon e senza runtime da gigabyte.</p>
+<p class="out">Nota tecnica: Flatpak/Flathub e Snap richiedono systemd e runtime da 1–2 GB: non compatibili con l'architettura di Tiny Core né con 512&nbsp;MB di RAM.</p>
 
 <h2>Persistenza dei dati</h2>
 <p>La particolarità di Tiny Core: niente viene salvato "in automatico" sulla RAM dove gira il sistema. I tuoi file e le impostazioni si conservano con <code>filetool.sh -b</code> (home e configurazioni in un archivio) e le app aggiuntive con <code>tce-load -wi &lt;nome&gt;.tcz</code> in un percorso su disco/USB scelto al primo avvio.</p>

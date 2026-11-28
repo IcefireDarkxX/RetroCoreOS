@@ -32,6 +32,7 @@ if [ "$1" = "--help" ]; then
   echo "Comandi utili di RetroCore:"
   echo "  retrocore-info     questo riepilogo"
   echo "  retrocore-wifi     collegarsi al WiFi"
+  echo "  retrocore-appimage esegue un'app .AppImage (senza FUSE)"
   echo "  tce-load -wi X     installa un'estensione (es: tce-load -wi firefox)"
   echo "  filetool.sh -b     salva le impostazioni per il prossimo avvio"
   exit 0
