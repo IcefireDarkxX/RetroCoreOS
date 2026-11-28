@@ -145,6 +145,12 @@ sync
 
 Dal menu di RetroCore, lancia il programma `tc-install` già incluso per **installare su disco fisso** (dopo di che userà il "backup" della home su disco e l'avvio sarà più veloce del CD/USB).
 
+## Installare programmi
+
+- **Repository .tcz** (modo principale): `tce-load -wi <nome>.tcz` o l'app **Apps** grafica — migliaia di pacchetti dai mirror ufficiali di Tiny Core
+- **AppImage**: file singolo, nessuna infrastruttura — scaricalo in `~/Applications` ed eseguilo con `retrocore-appimage file.AppImage` (funziona anche senza FUSE, estrae in /tmp); si conserva con `filetool.sh -b`
+- **Flatpak/Flathub e Snap: non disponibili (per scelta tecnica)** — richiedono systemd, OSTree/bubblewrap e runtime da 1–2 GB incompatibili con l'architettura di Tiny Core e con 512 MB–2 GB di RAM; le AppImage coprono lo stesso scopo con peso minimo
+
 ## Personalizzare
 
 - `config/onboot-extra.lst` — elenco delle estensioni incluse nella ISO (decommenta `libreoffice` se il PC ha ≥ 1 GB di RAM)

@@ -1,0 +1,46 @@
+#!/bin/sh
+# retrocore-appimage - esegue un'app AppImage anche senza FUSE (estrazione in /tmp)
+#
+# Uso:
+#   retrocore-appimage /percorso/app.AppImage [argomenti...]
+#
+# Consigli: metti i file .AppImage in ~/Applications (si salvano con filetool.sh -b)
+# Per il menu grafico: tce-load -wi appimage-helper  (crea le voci di lancio)
+
+if [ -z "$1" ]; then
+  echo "Uso: retrocore-appimage <file.AppImage> [argomenti...]"
+  echo ""
+  echo "Scarica le app da https://www.appimagehub.com o dai siti dei progetti"
+  echo "(Firefox, LibreOffice, Krita, Audacity e molti altri hanno versioni AppImage)."
+  echo "Salva i file in ~/Applications per conservarli tra gli avvii (filetool.sh -b)."
+  exit 0
+fi
+
+APP="$1"
+shift
+[ -f "$APP" ] || { echo "File non trovato: $APP"; exit 1; }
+
+# eseguibile
+[ -x "$APP" ] || chmod +x "$APP" 2>/dev/null || true
+
+DIR=$(mktemp -d /tmp/appimg.XXXXXX) || exit 1
+(
+  cd "$DIR" || exit 1
+  # se FUSE e' disponibile l'AppImage si lancia direttamente
+  if command -v fusermount >/dev/null 2>&1; then
+    exec "$APP" "$@"
+  fi
+  # fallback: estrazione senza FUSE
+  "$APP" --appimage-extract >/dev/null 2>&1 || {
+    echo "Impossibile eseguire/estrarre $APP (e' un file .AppImage valido?)"
+    exit 1
+  }
+  [ -x "$DIR/squashfs-root/AppRun" ] || {
+    echo "AppRun non trovato: AppImage non valida"
+    exit 1
+  }
+  exec "$DIR/squashfs-root/AppRun" "$@"
+)
+rc=$?
+rm -rf "$DIR"
+exit $rc
