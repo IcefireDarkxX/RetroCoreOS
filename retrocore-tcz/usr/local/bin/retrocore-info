@@ -25,6 +25,8 @@ summary() {
   echo "  Kernel : $kernel"
   [ -n "$cpu" ] && echo "  CPU    : $cpu"
   [ -n "$ram" ] && echo "  RAM    : ${ram} MB"
+  swap=$(free -m 2>/dev/null | awk '/^Swap:/{print $2}')
+  [ -n "$swap" ] && [ "$swap" != "0" ] && echo "  Swap   : ${swap} MB (zram compresso in RAM se attivo)"
   echo ""
 }
 

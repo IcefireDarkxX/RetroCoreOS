@@ -1,11 +1,40 @@
 #!/bin/sh
 # Nota: tce.installed viene eseguita dalla base all'installazione dell'estensione
 
-# Usa Xorg come X server di default se l'estensione e' stata caricata
-if [ -x /usr/local/bin/Xorg ]; then
-  echo "Xorg" > /etc/sysconfig/Xserver
-fi
+# ---------------------------------------------------------------- zram: swap compresso in RAM
+# Con poca RAM (PC 2009) e' molto meglio swappare su un dispositivo compresso
+# in RAM (accesso ~istintaneo, 3-4x piu' capienza utile) che sul disco meccanico.
+setup_zram() {
+  ram_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo 2>/dev/null)
+  [ -n "$ram_kb" ] || return 0
+  [ "$ram_kb" -le 4194304 ] || return 0          # sopra 4 GB di RAM non serve
+  if [ "$(wc -l < /proc/swaps 2>/dev/null || echo 1)" -gt 1 ]; then
+    return 0                                     # swap gia' attivo: non toccare nulla
+  fi
+  modprobe zram 2>/dev/null || return 0          # se il modulo non c'e', pazienza
+  [ -e /sys/block/zram0/disksize ] || return 0
+  size_kb=$((ram_kb / 4))
+  [ "$size_kb" -gt 524288 ] && size_kb=524288    # max 512 MB
+  [ "$size_kb" -lt 32768 ]  && return 0          # sotto 32 MB non vale la pena
+  echo $((size_kb * 1024)) > /sys/block/zram0/disksize 2>/dev/null || return 0
+  mkswap /dev/zram0 2>/dev/null || return 0
+  swapon -p 100 /dev/zram0 2>/dev/null || return 0   # priorita' massima: usato prima di qualsiasi swap su disco
+  echo "retrocore: attivato zram swap da $((size_kb / 1024)) MB" > /dev/kmsg 2>/dev/null || true
+}
+setup_zram
 
+# ---------------------------------------------------------------- backup piu' rapidi
+# filetool.sh -b non deve archiviare cache e spazzatura: solo impostazioni e file veri
+add_backup_excludes() {
+  xf=/opt/.xfiletool.lst
+  [ -f "$xf" ] || return 0
+  for e in home/tc/.cache home/tc/.macromedia home/tc/.adobe home/tc/.local/share/Trash; do
+    grep -qxF "$e" "$xf" || echo "$e" >> "$xf"
+  done
+}
+add_backup_excludes
+
+# ---------------------------------------------------------------- home utente
 h="/home/tc"
 [ -d "$h" ] || exit 0
 mkdir -p "$h/.X.d"
